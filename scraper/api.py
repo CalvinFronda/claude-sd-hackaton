@@ -47,6 +47,11 @@ def chatbot():
     return send_from_directory(FRONTEND_DIR, "chatbot.html")
 
 
+@app.route("/analytics")
+def analytics():
+    return send_from_directory(FRONTEND_DIR, "analytics_export.html")
+
+
 @app.route("/api/meetings")
 def api_meetings():
     conn = get_db()
