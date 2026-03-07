@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>San Diego City Council — Public Comments Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sand:    #F5EFE0;
+    --ocean:   #0B4F82;
+    --sky:     #1A90D9;
+    --coral:   #F25C3B;
+    --sun:     #F5A623;
+    --mint:    #2EC4A0;
+    --lavender:#8B5CF6;
+    --rose:    #E84393;
+    --ink:     #0D1B2A;
+    --mist:    #E8F4FD;
+    --white:   #FFFFFF;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--ink);
+    color: var(--sand);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0B2F55 0%, #0B4F82 50%, #0D6FA8 100%);
+    padding: 0;
+  }
+
+  .header-waves {
+    position: absolute; bottom: -2px; left: 0; width: 100%; pointer-events: none;
+  }
+
+  .header-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 48px 64px;
+    position: relative; z-index: 2;
+  }
+
+  .logo-block { display: flex; align-items: center; gap: 16px; }
+
+  .seal {
+    width: 64px; height: 64px;
+    background: var(--sun);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 10px; letter-spacing: 0.05em;
+    color: var(--ink);
+    text-align: center; line-height: 1.2;
+    box-shadow: 0 0 0 4px rgba(245,166,35,0.3), 0 0 0 8px rgba(245,166,35,0.1);
+    flex-shrink: 0;
+    animation: sealPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes sealPulse {
+    0%,100% { box-shadow: 0 0 0 4px rgba(245,166,35,0.3), 0 0 0 8px rgba(245,166,35,0.1); }
+    50%      { box-shadow: 0 0 0 6px rgba(245,166,35,0.4), 0 0 0 14px rgba(245,166,35,0.15); }
+  }
+
+  .title-block h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    letter-spacing: 0.06em;
+    line-height: 1;
+    color: var(--white);
+  }
+
+  .title-block p {
+    font-size: 0.78rem; font-weight: 400; opacity: 0.65; letter-spacing: 0.12em;
+    text-transform: uppercase; margin-top: 4px;
+  }
+
+  .header-meta {
+    text-align: right;
+  }
+
+  .meeting-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+    font-weight: 500; color: var(--sky);
+    margin-bottom: 8px;
+  }
+
+  .meeting-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem; letter-spacing: 0.05em;
+    color: var(--sun);
+  }
+
+  .meeting-date {
+    font-size: 0.75rem; opacity: 0.5; margin-top: 4px;
+  }
+
+  /* Meeting selector */
+  #meetingSelect {
+    display: block;
+    margin-top: 10px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    color: var(--sand);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    padding: 6px 10px;
+    cursor: pointer;
+    outline: none;
+    max-width: 260px;
+  }
+
+  #meetingSelect option {
+    background: #0B2F55;
+    color: var(--sand);
+  }
+
+  /* ── STATS ROW ── */
+  .stats-strip {
+    background: linear-gradient(90deg, #F25C3B, #F5A623, #2EC4A0, #1A90D9, #8B5CF6);
+    height: 4px;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    background: #0f2236;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .stat-card {
+    padding: 24px 32px;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .stat-card:last-child { border-right: none; }
+
+  .stat-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+
+  .stat-card:nth-child(1)::before { background: var(--coral); }
+  .stat-card:nth-child(2)::before { background: var(--sun); }
+  .stat-card:nth-child(3)::before { background: var(--mint); }
+  .stat-card:nth-child(4)::before { background: var(--lavender); }
+
+  .stat-label {
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.12em;
+    opacity: 0.5; font-weight: 500; margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.6rem; line-height: 1; letter-spacing: 0.02em;
+  }
+
+  .stat-card:nth-child(1) .stat-value { color: var(--coral); }
+  .stat-card:nth-child(2) .stat-value { color: var(--sun); }
+  .stat-card:nth-child(3) .stat-value { color: var(--mint); }
+  .stat-card:nth-child(4) .stat-value { color: var(--lavender); }
+
+  .stat-sub {
+    font-size: 0.72rem; opacity: 0.45; margin-top: 4px;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  main {
+    padding: 40px 48px;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 32px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  /* ── SECTION LABELS ── */
+  .section-label {
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.15em;
+    opacity: 0.4; font-weight: 500; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .section-label::after {
+    content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.08);
+  }
+
+  /* ── THEME BARS ── */
+  .themes-section { display: flex; flex-direction: column; gap: 0; }
+
+  .theme-item {
+    background: #0f2236;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin-bottom: 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .theme-item:hover {
+    border-color: rgba(255,255,255,0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  .theme-item.active {
+    border-color: rgba(255,255,255,0.2);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.35);
+  }
+
+  .theme-item::before {
+    content: '';
+    position: absolute; top: 0; left: 0; bottom: 0; width: 4px;
+    border-radius: 12px 0 0 12px;
+  }
+
+  .theme-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .theme-info { display: flex; align-items: center; gap: 12px; }
+
+  .theme-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+
+  .theme-name {
+    font-weight: 600; font-size: 1rem; line-height: 1.2;
+  }
+
+  .theme-sub {
+    font-size: 0.72rem; opacity: 0.45; margin-top: 2px;
+    font-style: italic;
+  }
+
+  .theme-count-block { text-align: right; }
+
+  .theme-count {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem; line-height: 1; letter-spacing: 0.02em;
+  }
+
+  .theme-count-label {
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.4;
+  }
+
+  .bar-track {
+    height: 8px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%; border-radius: 100px;
+    transition: width 1s cubic-bezier(.16,1,.3,1);
+    position: relative;
+  }
+
+  .bar-fill::after {
+    content: '';
+    position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 100%);
+    border-radius: 100px;
+  }
+
+  .pct-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem; opacity: 0.5; margin-top: 6px; text-align: right;
+  }
+
+  /* Expanded comments */
+  .theme-comments {
+    display: none; margin-top: 16px; padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .theme-item.active .theme-comments { display: block; }
+
+  .comment-card {
+    background: rgba(0,0,0,0.2);
+    border-radius: 8px; padding: 14px 16px; margin-bottom: 10px;
+    border-left: 3px solid transparent;
+    font-size: 0.83rem; line-height: 1.6;
+  }
+
+  .comment-meta {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+  }
+
+  .commenter-dot {
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+  }
+
+  .commenter-name {
+    font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.08em; opacity: 0.6;
+  }
+
+  .commenter-affil {
+    font-size: 0.68rem; opacity: 0.35; font-style: italic;
+  }
+
+  .comment-text { opacity: 0.8; }
+
+  /* ── SIDEBAR ── */
+  .sidebar { display: flex; flex-direction: column; gap: 24px; }
+
+  .sidebar-card {
+    background: #0f2236;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 24px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  /* Donut chart */
+  .donut-wrap {
+    position: relative; width: 180px; height: 180px; margin: 0 auto 20px;
+  }
+
+  .donut-wrap svg { transform: rotate(-90deg); }
+
+  .donut-center {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    text-align: center;
+  }
+
+  .donut-center-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem;
+    line-height: 1; color: var(--white);
+  }
+
+  .donut-center-label {
+    font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.4;
+  }
+
+  .legend { display: flex; flex-direction: column; gap: 10px; }
+
+  .legend-item {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.78rem;
+  }
+
+  .legend-dot {
+    width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0;
+  }
+
+  .legend-label { flex: 1; opacity: 0.7; }
+  .legend-val { font-family: 'DM Mono', monospace; font-size: 0.72rem; opacity: 0.5; }
+
+  /* Sentiment */
+  .sentiment-row {
+    display: flex; gap: 10px; margin-bottom: 16px;
+  }
+
+  .sentiment-pill {
+    flex: 1; text-align: center; padding: 12px 8px;
+    border-radius: 10px; font-size: 0.72rem; font-weight: 500;
+  }
+
+  .sentiment-pill .s-emoji { font-size: 1.4rem; display: block; margin-bottom: 4px; }
+  .sentiment-pill .s-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem;
+    display: block; line-height: 1;
+  }
+
+  .sentiment-pill.sup { background: rgba(46,196,160,0.15); color: var(--mint); }
+  .sentiment-pill.opp { background: rgba(242,92,59,0.15); color: var(--coral); }
+  .sentiment-pill.neu { background: rgba(245,166,35,0.15); color: var(--sun); }
+
+  /* Recent activity */
+  .activity-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .activity-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .activity-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    margin-top: 5px; flex-shrink: 0;
+  }
+
+  .activity-text { font-size: 0.78rem; opacity: 0.7; line-height: 1.5; }
+  .activity-time { font-size: 0.66rem; opacity: 0.35; margin-top: 3px; font-family: 'DM Mono', monospace; }
+
+  /* Filter tabs */
+  .filter-tabs {
+    display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;
+  }
+
+  .filter-tab {
+    padding: 7px 16px; border-radius: 100px;
+    font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500;
+    cursor: pointer; border: 1px solid rgba(255,255,255,0.12);
+    background: transparent; color: rgba(255,255,255,0.5);
+    transition: all 0.2s ease;
+  }
+
+  .filter-tab:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.8); }
+  .filter-tab.active { background: var(--ocean); border-color: var(--sky); color: var(--white); }
+
+  /* Search */
+  .search-wrap {
+    position: relative; margin-bottom: 28px;
+  }
+
+  .search-input {
+    width: 100%; background: #0f2236;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px; padding: 12px 16px 12px 44px;
+    color: var(--sand); font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+    outline: none; transition: border-color 0.2s;
+  }
+
+  .search-input::placeholder { opacity: 0.3; }
+
+  .search-input:focus { border-color: var(--sky); }
+
+  .search-icon {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    opacity: 0.35; font-size: 16px; pointer-events: none;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .theme-item:nth-child(1) { animation-delay: 0.05s; }
+  .theme-item:nth-child(2) { animation-delay: 0.10s; }
+  .theme-item:nth-child(3) { animation-delay: 0.15s; }
+  .theme-item:nth-child(4) { animation-delay: 0.20s; }
+  .theme-item:nth-child(5) { animation-delay: 0.25s; }
+  .theme-item:nth-child(6) { animation-delay: 0.30s; }
+  .theme-item:nth-child(7) { animation-delay: 0.35s; }
+  .theme-item:nth-child(8) { animation-delay: 0.40s; }
+
+  .stat-card:nth-child(1) { animation-delay: 0.0s; }
+  .stat-card:nth-child(2) { animation-delay: 0.05s; }
+  .stat-card:nth-child(3) { animation-delay: 0.10s; }
+  .stat-card:nth-child(4) { animation-delay: 0.15s; }
+
+  /* Footer */
+  footer {
+    text-align: center; padding: 24px 48px;
+    font-size: 0.68rem; opacity: 0.25; letter-spacing: 0.1em; text-transform: uppercase;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  /* ── COMMENTS DRAWER ── */
+  .drawer-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+  }
+  .drawer-overlay.open { display: block; }
+
+  .drawer {
+    position: fixed; top: 0; right: 0; bottom: 0;
+    width: min(620px, 100vw);
+    background: #0b1e31;
+    border-left: 1px solid rgba(255,255,255,0.1);
+    display: flex; flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(.16,1,.3,1);
+    z-index: 101;
+  }
+  .drawer.open { transform: translateX(0); }
+
+  .drawer-header {
+    padding: 24px 28px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+    flex-shrink: 0;
+  }
+
+  .drawer-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem; letter-spacing: 0.05em; color: var(--white); line-height: 1.2;
+  }
+
+  .drawer-sub {
+    font-size: 0.72rem; opacity: 0.4; margin-top: 4px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .drawer-close {
+    background: rgba(255,255,255,0.07); border: none; color: var(--sand);
+    width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 1rem;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  .drawer-close:hover { background: rgba(255,255,255,0.14); }
+
+  .drawer-filters {
+    padding: 14px 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    display: flex; gap: 8px; flex-wrap: wrap; flex-shrink: 0;
+  }
+
+  .drawer-filter-btn {
+    padding: 5px 14px; border-radius: 100px; font-size: 0.7rem;
+    letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500;
+    cursor: pointer; border: 1px solid rgba(255,255,255,0.12);
+    background: transparent; color: rgba(255,255,255,0.45);
+    transition: all 0.18s;
+  }
+  .drawer-filter-btn:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.8); }
+  .drawer-filter-btn.active { background: var(--ocean); border-color: var(--sky); color: var(--white); }
+
+  .drawer-body {
+    overflow-y: auto; flex: 1; padding: 20px 28px 28px;
+  }
+
+  .drawer-comment {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 10px; padding: 16px 18px; margin-bottom: 12px;
+    border-left: 3px solid var(--drawer-color, #F25C3B);
+  }
+
+  .drawer-comment-meta {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap;
+  }
+
+  .drawer-comment-name {
+    font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  .drawer-comment-pos {
+    font-size: 0.68rem; padding: 2px 10px; border-radius: 100px; font-weight: 500;
+  }
+  .drawer-comment-pos.support { background: rgba(46,196,160,0.15); color: var(--mint); }
+  .drawer-comment-pos.oppose  { background: rgba(242,92,59,0.15);  color: var(--coral); }
+  .drawer-comment-pos.general { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.4); }
+
+  .drawer-comment-time {
+    font-size: 0.65rem; opacity: 0.3; font-family: 'DM Mono', monospace; margin-left: auto;
+  }
+
+  .drawer-comment-text {
+    font-size: 0.84rem; line-height: 1.65; opacity: 0.75;
+  }
+
+  .drawer-empty {
+    text-align: center; padding: 48px 0; opacity: 0.3; font-size: 0.85rem;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 100px; }
+
+  @media (max-width: 1100px) {
+    main { grid-template-columns: 1fr; }
+    .header-inner { padding: 24px 24px 52px; }
+    main { padding: 32px 24px; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo-block">
+      <div class="seal">CITY OF<br>SAN<br>DIEGO</div>
+      <div class="title-block">
+        <h1>Public Comments Dashboard</h1>
+        <p>City Council Meeting Agenda Minutes · Civic Voice Analysis</p>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="meeting-badge">📋 Meeting Minutes</div>
+      <div class="meeting-title">Loading…</div>
+      <div class="meeting-date"></div>
+      <select id="meetingSelect"></select>
+    </div>
+  </div>
+  <svg class="header-waves" viewBox="0 0 1440 48" preserveAspectRatio="none" style="height:48px;">
+    <path d="M0,48 C360,0 1080,48 1440,16 L1440,48 Z" fill="#0d1b2a"/>
+  </svg>
+</header>
+
+<!-- STATS STRIP -->
+<div class="stats-strip"></div>
+
+<!-- STATS ROW -->
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="stat-label">Total Comments</div>
+    <div class="stat-value">—</div>
+    <div class="stat-sub">Loading…</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Unique Speakers</div>
+    <div class="stat-value">—</div>
+    <div class="stat-sub">Across agenda items</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Themes Identified</div>
+    <div class="stat-value">—</div>
+    <div class="stat-sub">AI-clustered from minutes</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">In Support</div>
+    <div class="stat-value">—</div>
+    <div class="stat-sub">vs opposed / neutral</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- LEFT: THEMES -->
+  <div>
+    <div class="section-label">Themes by Comment Volume</div>
+
+    <!-- SEARCH -->
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" type="text" placeholder="Search themes or keywords…" id="searchInput">
+    </div>
+
+    <!-- FILTER TABS -->
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="filterThemes('all', this)">All Themes</button>
+      <button class="filter-tab" onclick="filterThemes('support', this)">Majority Support</button>
+      <button class="filter-tab" onclick="filterThemes('oppose', this)">Majority Oppose</button>
+      <button class="filter-tab" onclick="filterThemes('neutral', this)">Mixed</button>
+    </div>
+
+    <!-- THEME LIST -->
+    <div class="themes-section" id="themeList"></div>
+  </div>
+
+  <!-- RIGHT: SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- DONUT -->
+    <div class="sidebar-card">
+      <div class="section-label">Theme Breakdown</div>
+      <div class="donut-wrap">
+        <svg width="180" height="180" viewBox="0 0 180 180">
+          <circle cx="90" cy="90" r="70" fill="none" stroke="#1a2f45" stroke-width="28"/>
+          <!-- segments drawn by JS -->
+          <g id="donutSegments"></g>
+        </svg>
+        <div class="donut-center">
+          <div class="donut-center-num">—</div>
+          <div class="donut-center-label">Comments</div>
+        </div>
+      </div>
+      <div class="legend" id="donutLegend"></div>
+    </div>
+
+    <!-- SENTIMENT -->
+    <div class="sidebar-card">
+      <div class="section-label">Overall Sentiment</div>
+      <div class="sentiment-row">
+        <div class="sentiment-pill sup">
+          <span class="s-emoji">👍</span>
+          <span class="s-num" id="supNum">—</span>
+          <span>Support</span>
+        </div>
+        <div class="sentiment-pill opp">
+          <span class="s-emoji">👎</span>
+          <span class="s-num" id="oppNum">—</span>
+          <span>Oppose</span>
+        </div>
+        <div class="sentiment-pill neu">
+          <span class="s-emoji">🤝</span>
+          <span class="s-num" id="neuNum">—</span>
+          <span>Neutral</span>
+        </div>
+      </div>
+
+      <!-- Sentiment mini bars -->
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:0.7rem;opacity:0.5;margin-bottom:5px;">
+            <span>Support</span><span id="supPctLabel">—</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" id="supBar" style="width:0%;background:linear-gradient(90deg,#2EC4A0,#1A90D9);"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:0.7rem;opacity:0.5;margin-bottom:5px;">
+            <span>Oppose</span><span id="oppPctLabel">—</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" id="oppBar" style="width:0%;background:linear-gradient(90deg,#F25C3B,#F5A623);"></div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:0.7rem;opacity:0.5;margin-bottom:5px;">
+            <span>Neutral</span><span id="neuPctLabel">—</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" id="neuBar" style="width:0%;background:linear-gradient(90deg,#F5A623,#8B5CF6);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT ACTIVITY -->
+    <div class="sidebar-card">
+      <div class="section-label">Recent Comments</div>
+      <div id="recentActivity"></div>
+    </div>
+
+    <!-- KEY SPEAKERS -->
+    <div class="sidebar-card">
+      <div class="section-label">Top Speakers by Volume</div>
+      <div id="topSpeakers"></div>
+    </div>
+
+  </div>
+</main>
+
+<!-- COMMENTS DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="commentsDrawer">
+  <div class="drawer-header">
+    <div>
+      <div class="drawer-title" id="drawerTitle">Comments</div>
+      <div class="drawer-sub" id="drawerSub"></div>
+    </div>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-filters" id="drawerFilters">
+    <button class="drawer-filter-btn active" onclick="filterDrawer('all', this)">All</button>
+    <button class="drawer-filter-btn" onclick="filterDrawer('support', this)">Support</button>
+    <button class="drawer-filter-btn" onclick="filterDrawer('oppose', this)">Oppose</button>
+    <button class="drawer-filter-btn" onclick="filterDrawer('general', this)">General</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</div>
+
+<footer>City of San Diego — Office of the City Clerk · Powered by AI-assisted minutes analysis · Live data from council.db</footer>
+
+<script>
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let themes = [];
+let recentComments = [];
+let topSpeakers = [];
+let currentMeetingId = null;
+
+// ═══════════════════════════════════════
+// DATA LOADING
+// ═══════════════════════════════════════
+async function loadData(meetingId) {
+  currentMeetingId = meetingId;
+  const qs = meetingId ? `?meeting_id=${meetingId}` : '';
+
+  const [stats, themesData, recent, speakers] = await Promise.all([
+    fetch(`/api/stats${qs}`).then(r => r.json()),
+    fetch(`/api/themes${qs}`).then(r => r.json()),
+    fetch(`/api/recent${qs}`).then(r => r.json()),
+    fetch(`/api/speakers${qs}`).then(r => r.json()),
+  ]);
+
+  // Update stat cards
+  document.querySelector('.stat-card:nth-child(1) .stat-value').textContent = stats.total_comments.toLocaleString();
+  document.querySelector('.stat-card:nth-child(1) .stat-sub').textContent = stats.meeting_date ?? 'All meetings';
+  document.querySelector('.stat-card:nth-child(2) .stat-value').textContent = stats.unique_speakers.toLocaleString();
+  document.querySelector('.stat-card:nth-child(3) .stat-value').textContent = stats.themes_identified;
+  document.querySelector('.stat-card:nth-child(4) .stat-value').textContent = stats.support_pct + '%';
+
+  // Update donut center
+  document.querySelector('.donut-center-num').textContent = stats.total_comments.toLocaleString();
+
+  // Update header meeting info
+  document.querySelector('.meeting-title').textContent = stats.meeting_title ?? 'All Meetings';
+  document.querySelector('.meeting-date').textContent = stats.meeting_date ?? '';
+
+  // Update sentiment bars from stats
+  const supPct = stats.support_pct;
+  // We don't have opp/neu breakdown from stats, derive roughly
+  document.getElementById('supPctLabel').textContent = supPct + '%';
+  document.getElementById('supBar').style.width = supPct + '%';
+
+  // Set global arrays and re-render
+  themes = themesData;
+  recentComments = recent;
+  topSpeakers = speakers;
+
+  renderThemes(themes);
+  buildDonut();
+  buildActivity();
+  buildSpeakers();
+  applyFilters();
+}
+
+// ═══════════════════════════════════════
+// MEETING SELECTOR
+// ═══════════════════════════════════════
+async function initMeetings() {
+  const meetings = await fetch('/api/meetings').then(r => r.json());
+  const sel = document.getElementById('meetingSelect');
+  sel.innerHTML = '<option value="">All Meetings</option>' +
+    meetings.map(m => `<option value="${m.meeting_id}">${m.date} — ${m.title.slice(0, 40)}</option>`).join('');
+  sel.addEventListener('change', () => loadData(sel.value || null));
+  if (meetings.length) {
+    sel.value = meetings[0].meeting_id;
+    loadData(meetings[0].meeting_id);
+  } else {
+    loadData(null);
+  }
+}
+
+// ═══════════════════════════════════════
+// RENDER THEMES
+// ═══════════════════════════════════════
+let activeId = null;
+
+function renderThemes(data) {
+  const container = document.getElementById('themeList');
+  container.innerHTML = '';
+
+  const total = data.reduce((a, t) => a + t.count, 0) || 1;
+  const maxCount = data.length ? data[0].count : 1;
+
+  data.forEach((t, i) => {
+    const pct = Math.round((t.count / total) * 100);
+    const barWidth = Math.round((t.count / maxCount) * 100);
+
+    const commentsHTML = t.comments.map(c => `
+      <div class="comment-card" style="border-left-color:${t.color};">
+        <div class="comment-meta">
+          <div class="commenter-dot" style="background:${t.color};"></div>
+          <span class="commenter-name">${c.name}</span>
+          <span class="commenter-affil">· ${c.affil}</span>
+        </div>
+        <div class="comment-text">"${c.text}"</div>
+      </div>
+    `).join('');
+
+    const el = document.createElement('div');
+    el.className = 'theme-item' + (activeId === t.id ? ' active' : '');
+    el.style.cssText = `--theme-color:${t.color};`;
+    el.innerHTML = `
+      <div class="theme-item-inner" style="border-left:4px solid ${t.color}; border-radius:12px 0 0 12px; position:absolute;top:0;left:0;bottom:0;width:4px;background:${t.color};"></div>
+      <div class="theme-header">
+        <div class="theme-info">
+          <div class="theme-icon" style="background:${t.bgColor};">${t.icon}</div>
+          <div>
+            <div class="theme-name">${t.name}</div>
+            <div class="theme-sub">${t.sub}</div>
+          </div>
+        </div>
+        <div class="theme-count-block">
+          <div class="theme-count" style="color:${t.color};">${t.count}</div>
+          <div class="theme-count-label">comments</div>
+        </div>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${barWidth}%;background:linear-gradient(90deg,${t.color},${t.color}aa);"></div>
+      </div>
+      <div class="pct-label">${pct}% of all comments</div>
+      <div class="theme-comments">
+        <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;opacity:0.4;margin-bottom:12px;font-weight:500;">Sample Public Comments</div>
+        ${commentsHTML}
+        <button class="view-all-btn"
+          style="margin-top:12px;width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);
+          background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.6);font-size:0.75rem;
+          letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;">
+          View all ${t.count} comments →
+        </button>
+      </div>
+    `;
+
+    el.addEventListener('click', () => {
+      if (activeId === t.id) {
+        activeId = null;
+        el.classList.remove('active');
+      } else {
+        document.querySelectorAll('.theme-item').forEach(e => e.classList.remove('active'));
+        activeId = t.id;
+        el.classList.add('active');
+      }
+    });
+
+    el.style.borderLeft = `4px solid ${t.color}`;
+
+    const btn = el.querySelector('.view-all-btn');
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      openDrawer(t.id, t.name, t.color);
+    });
+    btn.addEventListener('mouseover', () => { btn.style.background = 'rgba(255,255,255,0.09)'; btn.style.color = '#fff'; });
+    btn.addEventListener('mouseout',  () => { btn.style.background = 'rgba(255,255,255,0.04)'; btn.style.color = 'rgba(255,255,255,0.6)'; });
+
+    container.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════════════
+// DONUT CHART
+// ═══════════════════════════════════════
+function buildDonut() {
+  const r = 70, cx = 90, cy = 90;
+  const circumference = 2 * Math.PI * r;
+  const total = themes.reduce((a, t) => a + t.count, 0);
+
+  let offset = 0;
+  const segs = document.getElementById('donutSegments');
+  segs.innerHTML = '';
+
+  themes.forEach(t => {
+    const frac = t.count / total;
+    const dashArr = frac * circumference;
+    const dashOff = -(offset * circumference);
+
+    const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx', cx);
+    circle.setAttribute('cy', cy);
+    circle.setAttribute('r', r);
+    circle.setAttribute('fill', 'none');
+    circle.setAttribute('stroke', t.color);
+    circle.setAttribute('stroke-width', '28');
+    circle.setAttribute('stroke-dasharray', `${dashArr} ${circumference - dashArr}`);
+    circle.setAttribute('stroke-dashoffset', dashOff);
+    circle.style.transition = 'all 0.3s ease';
+    segs.appendChild(circle);
+
+    offset += frac;
+  });
+
+  // Legend
+  const legend = document.getElementById('donutLegend');
+  legend.innerHTML = themes.slice(0, 5).map(t => `
+    <div class="legend-item">
+      <div class="legend-dot" style="background:${t.color};"></div>
+      <span class="legend-label">${t.name.split(' & ')[0].split(' ').slice(0,3).join(' ')}</span>
+      <span class="legend-val">${t.count}</span>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════
+// RECENT ACTIVITY
+// ═══════════════════════════════════════
+function buildActivity() {
+  const el = document.getElementById('recentActivity');
+  el.innerHTML = recentComments.map(c => `
+    <div class="activity-item">
+      <div class="activity-dot" style="background:${c.color};"></div>
+      <div>
+        <div class="activity-text">${c.text}</div>
+        <div class="activity-time">${c.time}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════
+// TOP SPEAKERS
+// ═══════════════════════════════════════
+function buildSpeakers() {
+  const el = document.getElementById('topSpeakers');
+  el.innerHTML = topSpeakers.map(s => `
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+      <div style="width:32px;height:32px;border-radius:8px;background:${s.color}22;
+        display:flex;align-items:center;justify-content:center;
+        font-weight:700;font-size:0.8rem;color:${s.color};">${s.name[0]}</div>
+      <div style="flex:1;">
+        <div style="font-size:0.82rem;font-weight:500;">${s.name}</div>
+        <div style="font-size:0.68rem;opacity:0.4;">${s.comments} public comment${s.comments>1?'s':''}</div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.75rem;color:${s.color};opacity:0.8;">${s.comments}×</div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════
+// FILTER & SEARCH
+// ═══════════════════════════════════════
+let currentFilter = 'all';
+
+function filterThemes(type, btn) {
+  currentFilter = type;
+  document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  let filtered = themes;
+  if (currentFilter === 'support') filtered = filtered.filter(t => t.sentiment === 'support');
+  if (currentFilter === 'oppose') filtered = filtered.filter(t => t.sentiment === 'oppose');
+  if (currentFilter === 'neutral') filtered = filtered.filter(t => t.sentiment === 'mixed');
+  if (q) filtered = filtered.filter(t =>
+    t.name.toLowerCase().includes(q) || t.sub.toLowerCase().includes(q)
+  );
+  renderThemes(filtered);
+}
+
+document.getElementById('searchInput').addEventListener('input', applyFilters);
+
+// ═══════════════════════════════════════
+// COMMENTS DRAWER
+// ═══════════════════════════════════════
+let drawerAllComments = [];
+let drawerFilter = 'all';
+let drawerColor = '#F25C3B';
+
+async function openDrawer(agendaItemId, title, color) {
+  drawerColor = color;
+  drawerFilter = 'all';
+  document.querySelectorAll('.drawer-filter-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+
+  document.getElementById('drawerTitle').textContent = title;
+  document.getElementById('drawerSub').textContent = 'Loading…';
+  document.getElementById('drawerBody').innerHTML = '';
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('commentsDrawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  const qs = new URLSearchParams({ agenda_item_id: agendaItemId });
+  if (currentMeetingId) qs.set('meeting_id', currentMeetingId);
+
+  const data = await fetch(`/api/comments?${qs}`).then(r => r.json());
+  drawerAllComments = data;
+  document.getElementById('drawerSub').textContent = `${data.length} comment${data.length !== 1 ? 's' : ''}`;
+  renderDrawerComments();
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('commentsDrawer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function filterDrawer(type, btn) {
+  drawerFilter = type;
+  document.querySelectorAll('.drawer-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDrawerComments();
+}
+
+function posClass(pos) {
+  if (!pos) return 'general';
+  if (pos.includes('Support')) return 'support';
+  if (pos.includes('Opposition')) return 'oppose';
+  return 'general';
+}
+
+function renderDrawerComments() {
+  let list = drawerAllComments;
+  if (drawerFilter === 'support') list = list.filter(c => (c.position || '').includes('Support'));
+  else if (drawerFilter === 'oppose') list = list.filter(c => (c.position || '').includes('Opposition'));
+  else if (drawerFilter === 'general') list = list.filter(c => {
+    const p = c.position || '';
+    return !p.includes('Support') && !p.includes('Opposition');
+  });
+
+  const body = document.getElementById('drawerBody');
+  if (!list.length) {
+    body.innerHTML = '<div class="drawer-empty">No comments match this filter.</div>';
+    return;
+  }
+
+  body.innerHTML = list.map(c => {
+    const pos = c.position || 'General Comment';
+    const cls = posClass(c.position);
+    const time = c.submitted_at ? c.submitted_at.replace('T', ' ').slice(0, 16) : '';
+    const text = (c.comment_text || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return `
+      <div class="drawer-comment" style="--drawer-color:${drawerColor};">
+        <div class="drawer-comment-meta">
+          <span class="drawer-comment-name" style="color:${drawerColor};">${c.commenter_name || 'Anonymous'}</span>
+          <span class="drawer-comment-pos ${cls}">${pos}</span>
+          ${time ? `<span class="drawer-comment-time">${time}</span>` : ''}
+        </div>
+        <div class="drawer-comment-text">${text}</div>
+      </div>`;
+  }).join('');
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+initMeetings();
+</script>
+</body>
+</html>

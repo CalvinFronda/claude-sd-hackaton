@@ -30,9 +30,13 @@ python scraper/nlp_pipeline.py --db ./data/council.db
 
 # 3. Launch the dashboard
 streamlit run scraper/dashboard.py -- --db ./data/council.db
+
+# 3b. Launch the high-fidelity frontend (Flask)
+python scraper/api.py --db ./data/council.db --port 5001
+# Note: macOS reserves port 5000 for AirPlay; use 5001 or disable AirPlay Receiver in System Settings
 ```
 
-Open [http://localhost:8501](http://localhost:8501) to view the dashboard.
+Open [http://localhost:8501](http://localhost:8501) for the Streamlit dashboard, or [http://localhost:5001](http://localhost:5001) for the high-fidelity frontend.
 
 ## Dashboard tabs
 
@@ -49,3 +53,5 @@ Open [http://localhost:8501](http://localhost:8501) to view the dashboard.
 - `scraper/.env` holds your `ANTHROPIC_API_KEY` — never commit this file (it's gitignored)
 - Scraped data lives in `data/council.db` (SQLite) — also gitignored, each teammate runs the scraper locally
 - The NLP pipeline requires credits on your Anthropic account
+- run the SQL Gui  `datasette serve data/council.db --port 8001`
+- python scraper/api.py --db ./data/council.db --port 5003 

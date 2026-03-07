@@ -136,11 +136,12 @@ COLUMN_MAP = {
         "which agenda item", "agenda item(s)"
     ],
     "position":       [
+        "oppose / favor", "oppose/favor", "oppose", "favor",
         "position", "stance", "support/oppose", "for/against",
-        "i am", "i would like to", "comment type", "comment category"
+        "i am", "i would like to", "comment category"
     ],
     "comment_text":   [
-        "comment", "comments", "comment text", "message", "remarks",
+        "comment:", "comment", "comments", "comment text", "message", "remarks",
         "testimony", "written comment", "public comment", "your comment"
     ],
     "submitted_at":   ["date", "submitted", "date submitted", "timestamp", "time", "submission date"],
@@ -736,11 +737,57 @@ def run(output_dir, start_date, limit, headless):
     asyncio.run(run_async(output_dir, start_date, limit, headless))
 
 
+def reparse_comments(output_dir: str):
+    """Re-parse all cached Excel files and rebuild public_comments. No browser needed."""
+    output = Path(output_dir)
+    db_path = output / "council.db"
+    excel_dir = output / "excel_files"
+
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+
+    meetings = {
+        row["meeting_id"]: row["date"]
+        for row in conn.execute("SELECT meeting_id, date FROM meetings").fetchall()
+    }
+
+    excel_files = sorted(excel_dir.glob("comments_*.xlsx"))
+    log.info(f"Found {len(excel_files)} cached Excel files to re-parse")
+
+    conn.execute("DELETE FROM public_comments")
+    conn.commit()
+    log.info("Cleared public_comments table")
+
+    total = 0
+    for path in excel_files:
+        try:
+            meeting_id = int(path.stem.split("_")[1])
+        except (IndexError, ValueError):
+            continue
+        meeting_date = meetings.get(meeting_id, "")
+        comments = parse_excel_comments(path, meeting_id, meeting_date)
+        if comments:
+            save_comments(conn, comments)
+            total += len(comments)
+            log.info(f"  {path.name}: {len(comments)} comments")
+
+    log.info(f"\nRe-parsed {total} comments total. Resolving agenda item links…")
+    resolve_comment_items(conn)
+    conn.close()
+    log.info("Done.")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="SD City Council scraper")
-    parser.add_argument("--output",      default="../data",  help="Output directory")
-    parser.add_argument("--start",       default=None,       help="Start date YYYY-MM-DD")
-    parser.add_argument("--limit",       type=int,           help="Max meetings (for testing)")
-    parser.add_argument("--no-headless", action="store_true",help="Show browser window")
+    parser.add_argument("--output",           default="../data",  help="Output directory")
+    parser.add_argument("--start",            default=None,       help="Start date YYYY-MM-DD")
+    parser.add_argument("--limit",            type=int,           help="Max meetings (for testing)")
+    parser.add_argument("--no-headless",      action="store_true",help="Show browser window")
+    parser.add_argument("--reparse-comments", action="store_true",
+                        help="Re-parse cached Excel files and rebuild public_comments (no scraping)")
     args = parser.parse_args()
-    run(args.output, args.start, args.limit, headless=not args.no_headless)
+
+    if args.reparse_comments:
+        reparse_comments(args.output)
+    else:
+        run(args.output, args.start, args.limit, headless=not args.no_headless)
