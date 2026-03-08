@@ -1,57 +1,115 @@
-# SD City Council — Community Voice Pipeline
+# Model Citizens 
 
-Scrapes San Diego City Council agendas and public comment Excel files, classifies comments by theme/sentiment via Claude AI, and surfaces everything in a Streamlit dashboard.
+> **Making San Diego City Council meetings accessible to every resident.**
 
-## Quickstart
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-musical--buttercream--df352e.netlify.app-brightgreen)](https://musical-buttercream-df352e.netlify.app/)
 
-**Requirements:** Python 3.11+, Git
+---
 
-```bash
-git clone <repo-url>
-cd claude-sd-hackaton
+## The Team
 
-# Run setup (creates venv, installs deps, installs Playwright browser)
-./setup.sh
+**Model Citizens** — Claude San Diego Hackathon
 
-# Add your Anthropic API key
-echo "ANTHROPIC_API_KEY=sk-ant-..." > scraper/.env
+| Name |  
+|------|
+| Bijou | 
+| Calvin 
+| Sarai | 
+| Srishti | 
+| Rick | 
+
+📁 [GitHub Repository](https://github.com/CalvinFronda/claude-sd-hackaton)
+
+---
+
+## The Problem
+
+Every week, hundreds of San Diego residents take time out of their lives to speak at City Council meetings. They show up. They wait their turn. They say their piece in two minutes or less. And then the minutes get filed away. City council meetings are public — but effectively invisible.
+
+If a San Diego resident wants to know something as simple as:
+- *"How much money has the council allocated to homelessness this year?"*
+- *"Are housing discussions increasing or declining?"*
+- *"What new topics are emerging that weren't discussed 5 years ago?"*
+
+...they'd have to:
+
+1. Navigate the city's clunky Hyland Cloud portal
+2. Open individual meeting pages one at a time
+3. Read through dense agendas written in bureaucratic language
+4. Manually track themes, dollars, and votes across hundreds of meetings
+5. Build their own spreadsheets to spot trends
+
+**Everyday San Diegans don't have time for this.** The information is technically public but practically inaccessible.
+
+---
+
+## What It Does
+
+Our dashboard ingests three months of San Diego City Council meeting minutes — every public comment spoken between **December 2025 and March 2026** — strips out the bureaucratic language, finds the patterns, and makes them visible.
+
+- 💬 **Chat Assistant** — Just ask: *"What are people most concerned about?"* or *"What did residents say about housing?"* and get a plain-English answer instantly.
+- 📊 **Theme Rankings** — Public comments are automatically grouped into themes, ranked from the issue drawing the most attention down to the least.
+- 🎨 **Sentiment Tags** — Each theme is color-coded by sentiment so decision-makers get not just a count of voices, but a read on the room.
+- 📣 **Real Quotes** — Surface actual quotes from actual speakers, not summaries.
+
+The result: a single page that turns months of civic participation into one clear, ranked answer — **what are San Diego residents most passionate about right now?**
+
+---
+
+## Who It Helps
+
+| Who | How |
+|-----|-----|
+| **Residents** | See at a glance what the council is prioritizing |
+| **Journalists** | Instantly find voting patterns and emerging topics without weeks of manual research |
+| **Advocates & Nonprofits** | Track how often their issue (housing, climate, equity) appears and whether it's trending |
+| **Neighborhood Groups** | Search for items affecting their community and see how council voted |
+| **Researchers & Students** | Export structured data for academic analysis of local governance trends |
+| **Council Members' Offices** | Quick lookup of historical context — *"When did we last discuss water recycling?"* |
+
+---
+
+## Architecture
+
+```
+San Diego City Council Meetings (Hyland Cloud Portal)
+        │
+        ▼
+  Weekly Cron Job
+  (scrapes agendas + public comment data)
+        │
+        ▼
+     Database
+        │
+        ├──► Claude NLP
+        │    (groups agenda items into plain-language themes,
+        │     performs sentiment analysis)
+        │
+        ▼
+  Dashboard Frontend
+        │
+        ├──► Theme Rankings + Sentiment Visualization
+        └──► AI Chat Assistant (natural language Q&A)
 ```
 
-Then run the pipeline:
+---
 
-```bash
-source scraper/.venv/bin/activate
+## Data Sources
 
-# 1. Scrape meetings (--limit 5 for a quick test)
-python scraper/scraper.py --output ./data --limit 5
+- [San Diego City Council Agendas & Minutes](https://sandiego.hylandcloud.com/211agendaonlinecouncil) — Hyland Cloud Portal
 
-# 2. Classify comments with Claude
-python scraper/nlp_pipeline.py --db ./data/council.db
+---
 
-# 3. Launch the dashboard
-streamlit run scraper/dashboard.py -- --db ./data/council.db
+## Core Values
 
-# 3b. Launch the high-fidelity frontend (Flask)
-python scraper/api.py --db ./data/council.db --port 5001
-# Note: macOS reserves port 5000 for AirPlay; use 5001 or disable AirPlay Receiver in System Settings
-```
+🔍 **Transparency** — Is the city council's time and budget being disproportionately spent on issues less relevant to public concerns?
 
-Open [http://localhost:8501](http://localhost:8501) for the Streamlit dashboard, or [http://localhost:5001](http://localhost:5001) for the high-fidelity frontend.
+🗣️ **Accessibility** — City data shouldn't require knowledge of agenda item numbers and bureaucratic naming conventions to navigate.
 
-## Dashboard tabs
+🤝 **Civic Engagement** — Making it easier for residents to understand and participate in local government.
 
-| Tab | What it shows |
-|-----|---------------|
-| Themes | Bar chart of civic themes, sentiment breakdown |
-| By Agenda Item | Which items got the most comments, support/oppose |
-| Trends | Monthly comment volume, top themes over time |
-| Comments | Paginated browser with search and filter |
-| Mapping Quality | Matched vs unmatched comment-to-item refs |
+---
 
-## Notes
+## Live Demo
 
-- `scraper/.env` holds your `ANTHROPIC_API_KEY` — never commit this file (it's gitignored)
-- Scraped data lives in `data/council.db` (SQLite) — also gitignored, each teammate runs the scraper locally
-- The NLP pipeline requires credits on your Anthropic account
-- run the SQL Gui  `datasette serve data/council.db --port 8001`
-- python scraper/api.py --db ./data/council.db --port 5003 
+🌐 [https://musical-buttercream-df352e.netlify.app/](https://musical-buttercream-df352e.netlify.app/)
