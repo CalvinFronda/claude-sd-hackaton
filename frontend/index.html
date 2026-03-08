@@ -1181,7 +1181,7 @@
               this.style.borderColor = 'rgba(255,255,255,0.2)';
             "
           >
-            📊 Analytics Export
+            📊 Budget Data
           </a>
         </div>
       </div>
@@ -1196,7 +1196,7 @@
     </header>
 
     <!-- STATS STRIP -->
-    <div class="stats-strip"></div>
+    <!-- <div class="stats-strip"></div> -->
 
     <!-- STATS ROW -->
     <div class="stats-row">
@@ -1384,10 +1384,6 @@
         </div>
 
         <!-- KEY SPEAKERS -->
-        <div class="sidebar-card">
-          <div class="section-label">Top Speakers by Volume</div>
-          <div id="topSpeakers"></div>
-        </div>
       </div>
     </main>
 
@@ -1607,27 +1603,27 @@
       const recentComments = [
         {
           text: "Maria G. raised concerns about displacement in Golden Hill.",
-          time: "Item 4 — 10:42 AM",
+          time: "Item 4 — 2/4/2026",
           color: "#F25C3B",
         },
         {
           text: "Dr. Priya N. cited updated sea level rise projections.",
-          time: "Item 6 — 11:05 AM",
+          time: "Item 6 — 2/11/2026",
           color: "#1A90D9",
         },
         {
           text: "Rev. James T. called for subpoena power for review board.",
-          time: "Item 8 — 11:22 AM",
+          time: "Item 8 — 2/18/2026",
           color: "#8B5CF6",
         },
         {
           text: "BikeSD Coalition endorsed full Park Blvd bike corridor.",
-          time: "Item 9 — 12:10 PM",
+          time: "Item 9 — 2/25/2026",
           color: "#2EC4A0",
         },
         {
           text: "Bob H. warned about loss of manufacturing zoned land.",
-          time: "Item 10 — 1:48 PM",
+          time: "Item 10 — 3/4/2026",
           color: "#F5A623",
         },
       ];
@@ -1660,7 +1656,7 @@
       <div class="comment-card" style="border-left-color:${t.color};">
         <div class="comment-meta">
           <div class="commenter-dot" style="background:${t.color};"></div>
-          <span class="commenter-name">${c.name}</span>
+          
           <span class="commenter-affil">· ${c.affil}</span>
         </div>
         <div class="comment-text">"${c.text}"</div>
